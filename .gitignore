@@ -1,0 +1,39 @@
+# Unreal Engine generated files
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+Script/
+
+# Build artifacts
+Build/
+*.log
+
+# Visual Studio
+.vs/
+.vsconfig
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.vcxproj*
+*.pdb
+
+# JetBrains Rider
+.idea/
+
+# OS files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# Content: ignore asset packs, keep only project-specific folders
+Content/*
+!Content/Blueprints/
+!Content/Landscape/
+!Content/Maps/
+!Content/Collections/
+!Content/Developers/
+!Content/__ExternalActors__/
+!Content/__ExternalObjects__/
