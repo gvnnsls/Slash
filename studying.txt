@@ -1,0 +1,25 @@
+studying
+
+unit circle
+
+sin of A = opp / hyp => opp / 1 => opp (X divided by 1 is always X)
+sin of A = opp (in unit circle)
+
+--
+in unit circle with:
+- a graph of Y vertical axis
+- t horizontal axis
+- t being the position in the circle outline/circumference
+- y being the side opposite the angle from origin
+=> y is the sin of the angle from origin
+=> y/sin goes back and forth periodically based on t, because t causes the angle to change as it moves
+=> at Pi/2 (90 deg), the opposite side is the same as the hyp (1/1), so the sin/opp is 1
+=> at 0, the opposite side is 0, so sin in 0
+=> at pi/4 (45), the opposite side is half the hyp, sin 0.5
+
+360 deg = 2 pi / OR 4pi/2 (four quarters) divided by 2
+0 deg = 0 pi
+45 deg = pi/4
+90 = pi/2
+180 = pi/2 + pi/2 (2pi/2) => pi
+270 = pi/2 + pi/2 + pi/2 => 3pi/2
