@@ -2,6 +2,10 @@
 
 
 #include "Items/Item.h"
+
+#include "InputState.h"
+#include "Slash/DebugMacros.h"
+
 AItem::AItem()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -10,24 +14,19 @@ AItem::AItem()
 void AItem::BeginPlay()
 {
 	Super::BeginPlay();
-
-	UE_LOG(LogTemp, Warning, TEXT("BEGIN PLAY CALLED!"));
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(1, 60.f, FColor::Blue, FString("Item OnScreenMessage!"));
-	}
 }
 void AItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	// UE_LOG(LogTemp, Warning, TEXT("Dt: %f"), DeltaTime);
-	//
-	// if (GEngine)
-	// {
-	// 	FString name = GetName();
-	// 	FString msg = FString::Printf(TEXT("Dt: %f, item name: %s"), DeltaTime, *name);
-	// 	GEngine->AddOnScreenDebugMessage(1, 60.f, FColor::Blue, msg);
-	// }
+
+	float MovementRate = 100.f;
+	float RotationRate = 85.f;
+	FVector actorForward = GetActorForwardVector();
+	FVector actorPos = GetActorLocation();
+
+	AddActorWorldOffset(actorForward * MovementRate * DeltaTime);
+	AddActorWorldRotation(FRotator(0.f, RotationRate * DeltaTime, 0.f));
+	DRAW_SPHERE_SingleFrame(actorPos);
+	DRAW_VECTOR_SingleFrame(actorPos, actorPos + actorForward * 100.f)
 }
 
