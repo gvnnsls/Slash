@@ -17,13 +17,23 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-
-	UPROPERTY(VisibleInstanceOnly)
-	float RunningTime;
 	
-	UPROPERTY(EditInstanceOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Sine Constants")
 	float Amplitude = 0.25f;
 	
-	UPROPERTY(EditInstanceOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Sine Constants")
 	float TimeConstant = 5.f;
+
+	UFUNCTION(BlueprintPure)
+	float TransformedSin() const;
+
+	UFUNCTION(BlueprintPure)
+	float TransformedCos() const;
+
+	template<typename T>
+	static T Avg(T first, T second);
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float RunningTime;
 };
+
