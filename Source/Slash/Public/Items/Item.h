@@ -20,9 +20,14 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Sine Constants")
 	float Amplitude = 0.25f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Sine Constants")
+	float RotSpeed;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Sine Constants")
 	float TimeConstant = 5.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DeltaRot = 0.f;
 
 	UFUNCTION(BlueprintPure)
 	float TransformedSin() const;
@@ -35,5 +40,8 @@ protected:
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float RunningTime;
+
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* ItemMesh;
 };
 

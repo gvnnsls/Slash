@@ -9,6 +9,9 @@
 AItem::AItem()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	
+	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMeshComponent"));
+	RootComponent = ItemMesh;
 }
 void AItem::BeginPlay()
 {
@@ -36,18 +39,13 @@ void AItem::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	RunningTime += DeltaTime;
-	
-	float DeltaX = TransformedSin();
-	float DeltaY = TransformedCos();
-	float DeltaZ = 0.f;
-	AddActorWorldOffset(FVector(DeltaX, DeltaY, DeltaZ));
-	
-	FVector actorForward = GetActorForwardVector();
-	FVector actorPos = GetActorLocation();
-	DRAW_SPHERE_SingleFrame(actorPos);
-	DRAW_VECTOR_SingleFrame(actorPos, actorPos + actorForward * 100.f);
 
-	FVector AvgVec = Avg<FVector>(GetActorLocation(), FVector::Zero());
-	DRAW_DOT_SingleFrame(AvgVec);
+	float DeltaZ = TransformedSin();
+	AddActorWorldOffset(FVector(0.f, 0.f, DeltaZ));
+	
+	DeltaRot += DeltaTime * RotSpeed;
+	SetActorRotation(FRotator(0.f, DeltaRot, 0.f));
+	// adds constant rotation/delta rotation, makes it keep rotating constantly, doesn't need to be in Tick
+	// AddActorLocalRotation(FRotator(0.f, DeltaRot, 0.f));
 }
 
