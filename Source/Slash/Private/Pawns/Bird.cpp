@@ -5,7 +5,9 @@
 #include "Components/CapsuleComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Camera/CameraComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
+#include "GameFramework/SpringArmComponent.h"
 
 ABird::ABird()
 {
@@ -21,6 +23,16 @@ ABird::ABird()
 
 	MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("BirdFloatingMovement"));
 
+	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
+	SpringArmComponent->SetupAttachment(GetRootComponent());
+	SpringArmComponent->TargetArmLength = 200.f;
+	
+	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
+	CameraComponent->SetupAttachment(SpringArmComponent);
+
+	bUseControllerRotationYaw = true;
+	bUseControllerRotationPitch = true;
+
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 void ABird::BeginPlay()
@@ -32,7 +44,7 @@ void ABird::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
-	UE_LOG(LogTemp, Warning, TEXT("Value: x %f, y %f"), MovementVector.X, MovementVector.Y);
+	// UE_LOG(LogTemp, Warning, TEXT("Value: x %f, y %f"), MovementVector.X, MovementVector.Y);
 
 	if (MovementVector.Y != 0)
 	{
@@ -42,11 +54,18 @@ void ABird::Move(const FInputActionValue& Value)
 
 	if (MovementVector.X != 0)
 	{
-		// AddActorWorldRotation()
+		// todo: x axis movement?
 	}
 	
+}
 
-	
+void ABird::LookAround(const FInputActionValue& Value)
+{
+	// input is a Vector2D
+	FVector2D LookVector = Value.Get<FVector2D>();
+	// UE_LOG(LogTemp, Warning, TEXT("Value: x %f, y %f"), LookVector.X, LookVector.Y);
+	AddControllerYawInput(LookVector.X);
+	AddControllerPitchInput(LookVector.Y);
 }
 
 float ABird::TransformedSin() const
@@ -82,6 +101,9 @@ void ABird::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 			// Moving
 			EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ABird::Move);
+
+			// Look
+			EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ABird::LookAround);
 		}
 		
 	}

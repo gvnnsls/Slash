@@ -14,6 +14,8 @@ class UCapsuleComponent;
 class USkeletalMeshComponent;
 class UInputMappingContext;
 class UInputAction;
+class UCameraComponent;
+class USpringArmComponent;
 
 UCLASS()
 class SLASH_API ABird : public APawn
@@ -30,6 +32,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	void Move(const FInputActionValue& value);
+	void LookAround(const FInputActionValue& Value);
 
 	UPROPERTY(VisibleAnywhere)
 	UCapsuleComponent* Capsule;
@@ -60,6 +63,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* LookAction;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UFloatingPawnMovement* MovementComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	UCameraComponent* CameraComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	USpringArmComponent* SpringArmComponent;
 };
