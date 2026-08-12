@@ -3,6 +3,9 @@
 
 #include "Pawns/Bird.h"
 #include "Components/CapsuleComponent.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "GameFramework/FloatingPawnMovement.h"
 
 ABird::ABird()
 {
@@ -16,6 +19,8 @@ ABird::ABird()
 	BirdMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BirdMeshComponent"));
 	BirdMesh->SetupAttachment(GetRootComponent());
 
+	MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("BirdFloatingMovement"));
+
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 void ABird::BeginPlay()
@@ -23,9 +28,25 @@ void ABird::BeginPlay()
 	Super::BeginPlay();
 }
 
-void ABird::MoveForward(float value)
+void ABird::Move(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Value: %f"), value);
+	// input is a Vector2D
+	FVector2D MovementVector = Value.Get<FVector2D>();
+	UE_LOG(LogTemp, Warning, TEXT("Value: x %f, y %f"), MovementVector.X, MovementVector.Y);
+
+	if (MovementVector.Y != 0)
+	{
+		auto forward = GetActorForwardVector();
+		AddMovementInput(forward, MovementVector.Y * 10);
+	}
+
+	if (MovementVector.X != 0)
+	{
+		// AddActorWorldRotation()
+	}
+	
+
+	
 }
 
 float ABird::TransformedSin() const
@@ -40,7 +61,7 @@ void ABird::Tick(float DeltaTime)
 	RunningTime += DeltaTime;
 
 	float DeltaZ = TransformedSin();
-	AddActorWorldOffset(FVector(0.f, 0.f, DeltaZ));
+	// AddActorWorldOffset(FVector(0.f, 0.f, DeltaZ));
 }
 
 // Called to bind functionality to input
@@ -48,6 +69,22 @@ void ABird::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAxis(FName("MoveForward"), this, &ABird::MoveForward);
+	// PlayerInputComponent->BindAxis(FName("MoveForward"), this, &ABird::MoveForward);
+	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+		}
+
+		// Set up action bindings
+		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
+
+			// Moving
+			EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ABird::Move);
+		}
+		
+	}
+	
 }
 

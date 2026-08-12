@@ -3,13 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputActionValue.h"
 #include "GameFramework/Pawn.h"
 #include "Bird.generated.h"
 
+class UFloatingPawnMovement;
 // Forward declaration: tells compiler this class exists without including the full header.
 // Header will be included in .cpp
 class UCapsuleComponent;
 class USkeletalMeshComponent;
+class UInputMappingContext;
+class UInputAction;
 
 UCLASS()
 class SLASH_API ABird : public APawn
@@ -25,7 +29,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	void MoveForward(float value);
+	void Move(const FInputActionValue& value);
 
 	UPROPERTY(VisibleAnywhere)
 	UCapsuleComponent* Capsule;
@@ -49,4 +53,13 @@ protected:
 
 	UFUNCTION(BlueprintPure)
 	float TransformedSin() const;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputMappingContext* DefaultMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* MoveAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UFloatingPawnMovement* MovementComponent;
 };
