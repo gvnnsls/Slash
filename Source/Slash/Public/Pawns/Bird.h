@@ -33,6 +33,7 @@ protected:
 	virtual void BeginPlay() override;
 	void Move(const FInputActionValue& value);
 	void LookAround(const FInputActionValue& Value);
+	void ChangeCamera(const FInputActionValue& Value);
 
 	UPROPERTY(VisibleAnywhere)
 	UCapsuleComponent* Capsule;
@@ -53,6 +54,8 @@ protected:
 	float TimeConstant = 5.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DeltaRot = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float movementSpeed = 20.f;
 
 	UFUNCTION(BlueprintPure)
 	float TransformedSin() const;
@@ -65,13 +68,22 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* ChangeCameraAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UFloatingPawnMovement* MovementComponent;
 
 	UPROPERTY(VisibleAnywhere)
-	UCameraComponent* CameraComponent;
+	UCameraComponent* MainCameraComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	UCameraComponent* SecondaryCameraComponent;
 
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	USpringArmComponent* SecondarySpringArmComponent;
 };
