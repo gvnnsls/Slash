@@ -27,8 +27,16 @@ ABird::ABird()
 	SpringArmComponent->SetupAttachment(GetRootComponent());
 	SpringArmComponent->TargetArmLength = 200.f;
 	
-	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
-	CameraComponent->SetupAttachment(SpringArmComponent);
+	MainCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("MainCameraComponent"));
+	MainCameraComponent->SetupAttachment(SpringArmComponent);
+
+	SecondarySpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SecondarySpringArmComponent"));
+	SecondarySpringArmComponent->SetupAttachment(GetRootComponent());
+	SecondarySpringArmComponent->TargetArmLength = 800.f;
+	
+	SecondaryCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("SecondCameraComponent"));
+	SecondaryCameraComponent->SetupAttachment(SecondarySpringArmComponent);
+	SecondaryCameraComponent->SetActive(false);
 
 	bUseControllerRotationYaw = true;
 	bUseControllerRotationPitch = true;
@@ -49,7 +57,7 @@ void ABird::Move(const FInputActionValue& Value)
 	if (MovementVector.Y != 0)
 	{
 		auto forward = GetActorForwardVector();
-		AddMovementInput(forward, MovementVector.Y * 10);
+		AddMovementInput(forward, MovementVector.Y * movementSpeed);
 	}
 
 	if (MovementVector.X != 0)
@@ -68,6 +76,13 @@ void ABird::LookAround(const FInputActionValue& Value)
 	AddControllerPitchInput(LookVector.Y);
 }
 
+void ABird::ChangeCamera(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Changing camera..."));
+	MainCameraComponent->ToggleActive();
+	SecondaryCameraComponent->ToggleActive();
+}
+
 float ABird::TransformedSin() const
 {
 	return Amplitude * FMath::Sin(RunningTime * TimeConstant);
@@ -78,9 +93,6 @@ void ABird::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	RunningTime += DeltaTime;
-
-	float DeltaZ = TransformedSin();
-	// AddActorWorldOffset(FVector(0.f, 0.f, DeltaZ));
 }
 
 // Called to bind functionality to input
@@ -104,6 +116,9 @@ void ABird::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 			// Look
 			EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ABird::LookAround);
+
+			// Change camera
+			EnhancedInputComponent->BindAction(ChangeCameraAction, ETriggerEvent::Triggered, this, &ABird::ChangeCamera);
 		}
 		
 	}
