@@ -40,8 +40,6 @@ ABird::ABird()
 
 	bUseControllerRotationYaw = true;
 	bUseControllerRotationPitch = true;
-
-	AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 void ABird::BeginPlay()
 {
