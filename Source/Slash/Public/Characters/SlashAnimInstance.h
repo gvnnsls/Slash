@@ -24,6 +24,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = Movement)
 	class UCharacterMovementComponent* SlashCharacterMovement;
 	
-	UPROPERTY(BlueprintReadOnly, Category = Movement)
+	UPROPERTY(BlueprintReadWrite, Category = Movement)
 	float GroundSpeed;
+	
+	UPROPERTY(BlueprintReadWrite, Category = Movement)
+	float VerticalSpeed;
 };

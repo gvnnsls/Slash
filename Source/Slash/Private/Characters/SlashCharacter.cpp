@@ -82,6 +82,7 @@ void ASlashCharacter::Look(const FInputActionValue& Value)
 
 void ASlashCharacter::DoJump()
 {
+	Jump();
 }
 
 void ASlashCharacter::Attack()

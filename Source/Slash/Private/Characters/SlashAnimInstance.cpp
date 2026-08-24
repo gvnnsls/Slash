@@ -22,7 +22,9 @@ void USlashAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	
 	if (SlashCharacterMovement)
 	{
-		GroundSpeed = UKismetMathLibrary::VSizeXY(SlashCharacterMovement->Velocity);
+		FVector velocity = SlashCharacterMovement->Velocity;
+		GroundSpeed = UKismetMathLibrary::VSizeXY(velocity);
+		VerticalSpeed = velocity.Z;
 	}
 	
 }
