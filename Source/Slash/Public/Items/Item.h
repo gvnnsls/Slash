@@ -34,6 +34,9 @@ protected:
 
 	UFUNCTION(BlueprintPure)
 	float TransformedCos() const;
+	
+	UFUNCTION()
+	void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
 	template<typename T>
 	static T Avg(T first, T second);
@@ -43,5 +46,8 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* ItemMesh;
+	
+	UPROPERTY(VisibleAnywhere)
+	class USphereComponent* SphereCollider;
 };
 

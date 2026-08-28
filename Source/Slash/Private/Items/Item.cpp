@@ -4,6 +4,7 @@
 #include "Items/Item.h"
 
 #include "InputState.h"
+#include "Components/SphereComponent.h"
 #include "Slash/DebugMacros.h"
 
 AItem::AItem()
@@ -12,10 +13,15 @@ AItem::AItem()
 	
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMeshComponent"));
 	RootComponent = ItemMesh;
+	
+	SphereCollider = CreateDefaultSubobject<USphereComponent>(TEXT("SphereColl"));
+	SphereCollider->SetupAttachment(GetRootComponent());
 }
 void AItem::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	SphereCollider->OnComponentBeginOverlap.AddDynamic(this, &AItem::OnSphereOverlap);
 }
 
 float AItem::TransformedSin() const
@@ -26,6 +32,17 @@ float AItem::TransformedSin() const
 float AItem::TransformedCos() const
 {
 	return Amplitude * FMath::Cos(RunningTime * TimeConstant);
+}
+
+void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                            UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                            const FHitResult& SweepResult)
+{
+	const auto otherActorName = OtherActor->GetName();
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(1, 30.f, FColor::Red, otherActorName);
+	}
 }
 
 template <typename T>
