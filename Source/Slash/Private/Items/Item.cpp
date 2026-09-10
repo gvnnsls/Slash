@@ -21,7 +21,8 @@ void AItem::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	SphereCollider->OnComponentBeginOverlap.AddDynamic(this, &AItem::OnSphereOverlap);
+	SphereCollider->OnComponentBeginOverlap.AddDynamic(this, &AItem::OnSphereStartOverlap);
+	SphereCollider->OnComponentEndOverlap.AddDynamic(this, &AItem::OnSphereEndOverlap);
 }
 
 float AItem::TransformedSin() const
@@ -34,14 +35,23 @@ float AItem::TransformedCos() const
 	return Amplitude * FMath::Cos(RunningTime * TimeConstant);
 }
 
-void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+void AItem::OnSphereStartOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                             UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
                             const FHitResult& SweepResult)
 {
 	const auto otherActorName = OtherActor->GetName();
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(1, 30.f, FColor::Red, otherActorName);
+		GEngine->AddOnScreenDebugMessage(1, 2.f, FColor::Red, otherActorName);
+	}
+}
+
+void AItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, "end overlap");
 	}
 }
 
@@ -56,13 +66,6 @@ void AItem::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	RunningTime += DeltaTime;
-
-	float DeltaZ = TransformedSin();
-	AddActorWorldOffset(FVector(0.f, 0.f, DeltaZ));
 	
-	DeltaRot += DeltaTime * RotSpeed;
-	SetActorRotation(FRotator(0.f, DeltaRot, 0.f));
-	// adds constant rotation/delta rotation, makes it keep rotating constantly, doesn't need to be in Tick
-	// AddActorLocalRotation(FRotator(0.f, DeltaRot, 0.f));
 }
 
