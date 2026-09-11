@@ -2,10 +2,7 @@
 
 
 #include "Items/Item.h"
-
-#include "InputState.h"
 #include "Components/SphereComponent.h"
-#include "Slash/DebugMacros.h"
 
 AItem::AItem()
 {
@@ -67,5 +64,10 @@ void AItem::Tick(float DeltaTime)
 
 	RunningTime += DeltaTime;
 	
+}
+
+UStaticMeshComponent* AItem::GetItemMesh() const
+{
+	return ItemMesh;
 }
 

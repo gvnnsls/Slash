@@ -14,6 +14,9 @@ class SLASH_API AItem : public AActor
 public:	
 	AItem();
 	virtual void Tick(float DeltaTime) override;
+	
+	UFUNCTION()
+	UStaticMeshComponent* GetItemMesh() const;
 
 protected:
 	virtual void BeginPlay() override;

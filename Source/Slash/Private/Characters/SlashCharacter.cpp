@@ -5,9 +5,11 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Camera/CameraComponent.h"
+#include "Components/SphereComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GroomComponent.h"
+#include "Items/Weapons/Weapon.h"
 
 ASlashCharacter::ASlashCharacter()
 {
@@ -36,12 +38,36 @@ ASlashCharacter::ASlashCharacter()
 	Eyebrows = CreateDefaultSubobject<UGroomComponent>(TEXT("Eyebrows"));
 	Eyebrows->SetupAttachment(GetMesh());
 	Eyebrows->AttachmentName = FString("head");
+	
+	InteractZone = CreateDefaultSubobject<USphereComponent>(TEXT("InteractZone"));
+	InteractZone->SetupAttachment(GetRootComponent());
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 void ASlashCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	InteractZone->OnComponentBeginOverlap.AddDynamic(this, &ASlashCharacter::OnInteractZoneStartOverlap);
+	InteractZone->OnComponentEndOverlap.AddDynamic(this, &ASlashCharacter::OnInteractZoneEndOverlap);
+}
+
+void ASlashCharacter::OnInteractZoneStartOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	AWeapon* weapon = Cast<AWeapon>(OtherActor);
+	if (weapon)
+	{
+		InteractedItem = weapon;
+		CanInteract = true;
+	}
+}
+
+void ASlashCharacter::OnInteractZoneEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	CanInteract = false;
+	InteractedItem = nullptr;
 }
 
 void ASlashCharacter::Move(const FInputActionValue& value)
@@ -91,10 +117,31 @@ void ASlashCharacter::Attack()
 
 void ASlashCharacter::Equip()
 {
+	if (GrabbedWeapon)
+		return;
+	
+	if (!InteractedItem)
+		return;
+	
+	const auto& ItemMesh = InteractedItem->GetItemMesh();
+	ItemMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("RightHandSocket"));
+	
+	GrabbedWeapon = true;
+	IsWeaponEquipped = true;
+}
+
+void ASlashCharacter::Unequip()
+{
 }
 
 void ASlashCharacter::Dodge()
 {
+}
+
+void ASlashCharacter::Interact()
+{
+	if (!CanInteract)
+		return;
 }
 
 void ASlashCharacter::Tick(float DeltaTime)
@@ -125,9 +172,13 @@ void ASlashCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 			// Attack
 			EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &ASlashCharacter::Attack);
 			// Equip
-			EnhancedInputComponent->BindAction(EquipAction, ETriggerEvent::Triggered, this, &ASlashCharacter::Equip);
+			EnhancedInputComponent->BindAction(EquipWeaponAction, ETriggerEvent::Triggered, this, &ASlashCharacter::Equip);
+			// Unequip
+			EnhancedInputComponent->BindAction(UnequipWeaponAction, ETriggerEvent::Triggered, this, &ASlashCharacter::Unequip);
 			// Dodge
 			EnhancedInputComponent->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &ASlashCharacter::Dodge);
+			// Interaction
+			EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &ASlashCharacter::Interact);
 		}
 		
 	}

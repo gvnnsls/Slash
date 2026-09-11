@@ -26,6 +26,35 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	
+	UFUNCTION()
+	virtual void OnInteractZoneStartOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+	UFUNCTION()
+	virtual void OnInteractZoneEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	
+	void Move(const FInputActionValue& value);
+	void Look(const FInputActionValue& value);
+	void DoJump();
+	void Attack();
+	void Equip();
+	void Unequip();
+	void Dodge();
+	void Interact();
+	
+	UPROPERTY(VisibleInstanceOnly)
+	bool CanInteract = false;
+	
+	UPROPERTY(VisibleInstanceOnly)
+	bool GrabbedWeapon = false;
+	
+	UPROPERTY(VisibleInstanceOnly)
+	bool IsWeaponEquipped = false;
+	
+	UPROPERTY(VisibleInstanceOnly)
+	class AItem* InteractedItem;
+	
+	UPROPERTY(VisibleAnywhere)
+	class USphereComponent* InteractZone;
+	
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* MainCameraComponent;
 	
@@ -52,16 +81,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* DodgeAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* EquipAction;
+	UInputAction* InteractAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* EquipWeaponAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* UnequipWeaponAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MovementSpeed = 1.f;
-
-	void Move(const FInputActionValue& value);
-	void Look(const FInputActionValue& value);
-	void DoJump();
-	void Attack();
-	void Equip();
-	void Dodge();
 
 };

@@ -10,21 +10,21 @@ void AWeapon::OnSphereStartOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 {
 	Super::OnSphereStartOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 	
-	AWeapon::EquipWeaponToActor(OtherActor);
+	// AWeapon::EquipWeaponToActor(OtherActor);
 }
 
 void AWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
-	if (isEquipped)
-		return;
-	
-	float DeltaZ = TransformedSin();
-	AddActorWorldOffset(FVector(0.f, 0.f, DeltaZ));
-	
-	DeltaRot += DeltaTime * RotSpeed;
-	SetActorRotation(FRotator(0.f, DeltaRot, 0.f));
+	// if (isEquipped)
+	// 	return;
+	//
+	// float DeltaZ = TransformedSin();
+	// AddActorWorldOffset(FVector(0.f, 0.f, DeltaZ));
+	//
+	// DeltaRot += DeltaTime * RotSpeed;
+	// SetActorRotation(FRotator(0.f, DeltaRot, 0.f));
 }
 
 void AWeapon::EquipWeaponToActor(AActor* OtherActor)
