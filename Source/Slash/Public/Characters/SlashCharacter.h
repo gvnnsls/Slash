@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ECharacterState.h"
 #include "GameFramework/Character.h"
 #include "SlashCharacter.generated.h"
 
@@ -9,6 +10,7 @@ class UInputAction;
 class UCameraComponent;
 class USpringArmComponent;
 class UGroomComponent;
+class UAnimMontage;
 struct FInputActionValue;
 
 UCLASS()
@@ -22,8 +24,15 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+	FORCEINLINE ECharacterState GetCharacterState() const { return CharacterState; }
 
 protected:
+	ECharacterState CharacterState = ECharacterState::CS_Unequipped;
+	
+	UPROPERTY(BlueprintReadOnly)
+	UAnimInstance* AnimInstance;
+
 	virtual void BeginPlay() override;
 	
 	UFUNCTION()
@@ -89,5 +98,13 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MovementSpeed = 1.f;
+	
+	// Animation montages
+	UPROPERTY(EditDefaultsOnly, Category = Montages)
+	UAnimMontage* AttackMontage;
+	
+	int AttackIndex = 0;
+	const FName FirstAttackName = "Attack1";
+	const FName SecondAttackName = "Attack2";
 
 };

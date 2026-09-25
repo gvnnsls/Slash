@@ -25,6 +25,7 @@ void USlashAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		FVector velocity = SlashCharacterMovement->Velocity;
 		GroundSpeed = UKismetMathLibrary::VSizeXY(velocity);
 		VerticalSpeed = velocity.Z;
+		CharacterState = SlashCharacter->GetCharacterState();
 	}
 	
 }

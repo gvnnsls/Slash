@@ -50,6 +50,8 @@ void ASlashCharacter::BeginPlay()
 	
 	InteractZone->OnComponentBeginOverlap.AddDynamic(this, &ASlashCharacter::OnInteractZoneStartOverlap);
 	InteractZone->OnComponentEndOverlap.AddDynamic(this, &ASlashCharacter::OnInteractZoneEndOverlap);
+	
+	AnimInstance = GetMesh()->GetAnimInstance();
 }
 
 void ASlashCharacter::OnInteractZoneStartOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -113,6 +115,25 @@ void ASlashCharacter::DoJump()
 
 void ASlashCharacter::Attack()
 {
+	if (AnimInstance && AttackMontage)
+	{
+		AnimInstance->Montage_Play(AttackMontage);
+		switch (AttackIndex)
+		{
+		default:
+		case 0:
+			AnimInstance->Montage_JumpToSection(FirstAttackName);
+			AttackIndex = 1;
+			break;
+		
+		case 1:
+			AnimInstance->Montage_JumpToSection(SecondAttackName);
+			AttackIndex = 0;
+			break;
+		}
+		
+	}
+	
 }
 
 void ASlashCharacter::Equip()
@@ -128,10 +149,13 @@ void ASlashCharacter::Equip()
 	
 	GrabbedWeapon = true;
 	IsWeaponEquipped = true;
+	
+	CharacterState = ECharacterState::CS_EquippedOneHanded;
 }
 
 void ASlashCharacter::Unequip()
 {
+	CharacterState = ECharacterState::CS_Unequipped;
 }
 
 void ASlashCharacter::Dodge()

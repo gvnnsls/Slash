@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "ECharacterState.h"
 #include "SlashAnimInstance.generated.h"
 
 /**
@@ -29,4 +30,7 @@ public:
 	
 	UPROPERTY(BlueprintReadWrite, Category = Movement)
 	float VerticalSpeed;
+	
+	UPROPERTY(BlueprintReadOnly)
+	ECharacterState CharacterState;
 };
