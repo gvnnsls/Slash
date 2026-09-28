@@ -28,7 +28,10 @@ public:
 	FORCEINLINE ECharacterState GetCharacterState() const { return CharacterState; }
 
 protected:
-	ECharacterState CharacterState = ECharacterState::CS_Unequipped;
+	ECharacterState CharacterState = ECharacterState::CS_Unarmed;
+	
+	UPROPERTY(BlueprintReadWrite, meta = ( AllowPrivateAccess = "true") )
+	EActionState ActionState = EActionState::AS_Unoccupied;
 	
 	UPROPERTY(BlueprintReadOnly)
 	UAnimInstance* AnimInstance;
@@ -43,11 +46,18 @@ protected:
 	void Move(const FInputActionValue& value);
 	void Look(const FInputActionValue& value);
 	void DoJump();
+	bool CanAttack() const;
+	bool CanBufferAttack() const;
 	void Attack();
 	void Equip();
 	void Unequip();
 	void Dodge();
 	void Interact();
+	
+	void PlayAttackMontage();
+	
+	UFUNCTION(BlueprintCallable)
+	void AttackEnd();
 	
 	UPROPERTY(VisibleInstanceOnly)
 	bool CanInteract = false;
@@ -57,6 +67,9 @@ protected:
 	
 	UPROPERTY(VisibleInstanceOnly)
 	bool IsWeaponEquipped = false;
+	
+	UPROPERTY(VisibleInstanceOnly)
+	bool IsAttackBuffered = false;
 	
 	UPROPERTY(VisibleInstanceOnly)
 	class AItem* InteractedItem;

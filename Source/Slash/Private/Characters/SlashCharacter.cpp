@@ -115,25 +115,61 @@ void ASlashCharacter::DoJump()
 
 void ASlashCharacter::Attack()
 {
-	if (AnimInstance && AttackMontage)
+	if (!CanAttack())
 	{
-		AnimInstance->Montage_Play(AttackMontage);
-		switch (AttackIndex)
-		{
+		if (CanBufferAttack())
+			IsAttackBuffered = true;
+		
+		return;
+	}
+	
+	PlayAttackMontage();
+}
+
+bool ASlashCharacter::CanAttack() const
+{
+	return ActionState == EActionState::AS_Unoccupied && CharacterState != ECharacterState::CS_Unarmed;
+}
+
+bool ASlashCharacter::CanBufferAttack() const
+{
+	return CharacterState != ECharacterState::CS_Unarmed;
+}
+
+void ASlashCharacter::PlayAttackMontage()
+{
+	if (!AnimInstance || !AttackMontage)
+		return;
+	
+	ActionState = EActionState::AS_Attacking;
+	
+	AnimInstance->Montage_Play(AttackMontage);
+	switch (AttackIndex)
+	{
 		default:
 		case 0:
 			AnimInstance->Montage_JumpToSection(FirstAttackName);
 			AttackIndex = 1;
 			break;
-		
+			
 		case 1:
 			AnimInstance->Montage_JumpToSection(SecondAttackName);
 			AttackIndex = 0;
 			break;
-		}
-		
 	}
-	
+}
+
+void ASlashCharacter::AttackEnd()
+{
+	if (IsAttackBuffered)
+	{
+		IsAttackBuffered = false;
+		PlayAttackMontage();
+	}	
+	else
+	{
+		ActionState = EActionState::AS_Unoccupied;
+	}
 }
 
 void ASlashCharacter::Equip()
@@ -155,7 +191,7 @@ void ASlashCharacter::Equip()
 
 void ASlashCharacter::Unequip()
 {
-	CharacterState = ECharacterState::CS_Unequipped;
+	CharacterState = ECharacterState::CS_Unarmed;
 }
 
 void ASlashCharacter::Dodge()
