@@ -18,8 +18,8 @@ void AItem::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	SphereCollider->OnComponentBeginOverlap.AddDynamic(this, &AItem::OnSphereStartOverlap);
-	SphereCollider->OnComponentEndOverlap.AddDynamic(this, &AItem::OnSphereEndOverlap);
+	// SphereCollider->OnComponentBeginOverlap.AddDynamic(this, &AItem::OnSphereStartOverlap);
+	// SphereCollider->OnComponentEndOverlap.AddDynamic(this, &AItem::OnSphereEndOverlap);
 }
 
 float AItem::TransformedSin() const
@@ -64,6 +64,11 @@ void AItem::Tick(float DeltaTime)
 
 	RunningTime += DeltaTime;
 	
+}
+
+EItemState AItem::GetItemState()
+{
+	return ItemState;
 }
 
 UStaticMeshComponent* AItem::GetItemMesh() const

@@ -58,22 +58,33 @@ void ASlashCharacter::OnInteractZoneStartOverlap(UPrimitiveComponent* Overlapped
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	AWeapon* weapon = Cast<AWeapon>(OtherActor);
-	if (weapon)
-	{
-		InteractedItem = weapon;
-		CanInteract = true;
-	}
+	if (!weapon)
+		return;
+	
+	if (weapon->GetItemState() != EItemState::EIS_Hovering)
+		return;
+	
+	InteractedWeapon = weapon;
+	CanInteract = true;
 }
 
 void ASlashCharacter::OnInteractZoneEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	CanInteract = false;
-	InteractedItem = nullptr;
+	InteractedWeapon = nullptr;
+}
+
+bool ASlashCharacter::CanMove()
+{
+	return ActionState != EActionState::AS_Attacking;
 }
 
 void ASlashCharacter::Move(const FInputActionValue& value)
 {
+	if (!CanMove())
+		return;
+	
 	// input is a Vector2D
 	// Note: the input vector uses X for left and right (A or D) and Y for up and down (W or S), not related to spacial coordinates
 	// Meanwhile in unreal coordinate system, Forward is the X vector and Right is the Y vector, 
@@ -108,8 +119,16 @@ void ASlashCharacter::Look(const FInputActionValue& Value)
 	AddControllerPitchInput(LookVector.Y);
 }
 
+bool ASlashCharacter::CanJump()
+{
+	return ActionState != EActionState::AS_Attacking;
+}
+
 void ASlashCharacter::DoJump()
 {
+	if (!CanJump())
+		return;
+	
 	Jump();
 }
 
@@ -177,16 +196,17 @@ void ASlashCharacter::Equip()
 	if (GrabbedWeapon)
 		return;
 	
-	if (!InteractedItem)
+	if (!InteractedWeapon)
 		return;
 	
-	const auto& ItemMesh = InteractedItem->GetItemMesh();
-	ItemMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("RightHandSocket"));
+	const auto& WeaponMesh = InteractedWeapon->GetItemMesh();
+	WeaponMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("RightHandSocket"));
 	
 	GrabbedWeapon = true;
 	IsWeaponEquipped = true;
 	
 	CharacterState = ECharacterState::CS_EquippedOneHanded;
+	InteractedWeapon->EquipWeapon();
 }
 
 void ASlashCharacter::Unequip()

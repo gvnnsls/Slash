@@ -42,9 +42,11 @@ protected:
 	virtual void OnInteractZoneStartOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 	UFUNCTION()
 	virtual void OnInteractZoneEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-	
+	bool CanMove();
+
 	void Move(const FInputActionValue& value);
 	void Look(const FInputActionValue& value);
+	bool CanJump();
 	void DoJump();
 	bool CanAttack() const;
 	bool CanBufferAttack() const;
@@ -72,7 +74,7 @@ protected:
 	bool IsAttackBuffered = false;
 	
 	UPROPERTY(VisibleInstanceOnly)
-	class AItem* InteractedItem;
+	class AWeapon* InteractedWeapon;
 	
 	UPROPERTY(VisibleAnywhere)
 	class USphereComponent* InteractZone;

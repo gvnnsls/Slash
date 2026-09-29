@@ -6,6 +6,14 @@
 #include "GameFramework/Actor.h"
 #include "Item.generated.h"
 
+enum class EItemState : uint8
+{
+	EIS_Hovering,
+	EIS_Equipped,
+	EIS_Unequipped,
+	EIS_OnTheFloor,
+};
+
 UCLASS()
 class SLASH_API AItem : public AActor
 {
@@ -15,11 +23,15 @@ public:
 	AItem();
 	virtual void Tick(float DeltaTime) override;
 	
+	virtual EItemState GetItemState();
+	
 	UFUNCTION()
 	UStaticMeshComponent* GetItemMesh() const;
 
 protected:
 	virtual void BeginPlay() override;
+	
+	EItemState ItemState = EItemState::EIS_Hovering;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Sine Constants")
 	float Amplitude = 0.25f;
